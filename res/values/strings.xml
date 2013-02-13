@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">HISMobile</string>
+    <string name="app_name">HISMobile</string>
+    <string name="pref_time_sync">Sync time</string>
+    <string name="set">Set</string>
+    <string name="cancel">Cancel</string>
 </resources>

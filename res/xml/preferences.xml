@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference android:key="ck_sync"
+                        android:title="Enable auto sync"
+                        android:defaultValue="true"/>
+
+    <!--<EditTextPreference android:inputType="time"-->
+    <!--android:key="time_sync"-->
+    <!--android:dependency="ck_sync"-->
+    <!--android:title="@string/pref_time_sync" />-->
+    <az.his.android.TimePreference
+            android:key="time_sync"
+            android:title="@string/pref_time_sync"/>
+</PreferenceScreen>
