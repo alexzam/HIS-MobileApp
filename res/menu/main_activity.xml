@@ -5,4 +5,8 @@
           android:title="Settings"
           android:alphabeticShortcut="S"
           android:icon="@android:drawable/ic_menu_preferences"/>
+
+    <item android:id="@+id/menu_sync"
+          android:title="Sync now"
+          android:icon="@drawable/ic_menu_refresh"/>
 </menu>
