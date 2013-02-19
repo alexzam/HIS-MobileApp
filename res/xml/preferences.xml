@@ -5,7 +5,7 @@
             android:key="str_url"
             android:title="Server URL"
             android:inputType="textUri"
-            android:defaultValue="http://192.169.1.3/his-test"
+            android:defaultValue="http://192.168.1.3/his-test"
             />
 
     <CheckBoxPreference
