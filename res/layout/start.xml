@@ -11,11 +11,24 @@
             android:text="Loading..."
             android:id="@+id/txtStatus" android:singleLine="true" android:visibility="visible"
             android:typeface="normal"/>
-    <EditText
+    <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="URL"
-            android:id="@+id/etUrl" android:visibility="gone" android:inputType="textUri" android:maxLines="1"/>
+            android:layout_height="wrap_content" android:layout_gravity="top" android:id="@+id/layUrl"
+            android:visibility="gone">
+        <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="URL"
+                android:id="@+id/etUrl" android:inputType="textUri"
+                android:password="false" android:phoneNumber="false" android:singleLine="false"
+                android:layout_weight="1"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:id="@+id/btSubmitUrl" android:onClick="onBtSubmitUrl"/>
+    </LinearLayout>
     <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">

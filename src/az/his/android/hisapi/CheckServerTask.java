@@ -18,7 +18,7 @@ public class CheckServerTask extends AsyncTask {
 
             return res == 200;
         } catch (IOException e) {
-            return null;
+            return false;
         }
     }
 

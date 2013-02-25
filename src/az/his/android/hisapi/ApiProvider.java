@@ -11,10 +11,14 @@ public class ApiProvider {
         ApiProvider.url = url;
     }
 
-    public static void checkServer(Context context, ApiListener listener) {
+    public static boolean isNetworkReady(Context context){
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
+        return networkInfo != null && networkInfo.isConnected();
+    }
+
+    public static void checkServer(Context context, ApiListener listener) {
+        if (isNetworkReady(context)) {
             new CheckServerTask().execute(url, listener);
         } else {
             listener.handleApiResult(false);
