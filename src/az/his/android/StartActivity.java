@@ -5,10 +5,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import az.his.android.hisapi.ApiListener;
 import az.his.android.hisapi.ApiProvider;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.Map;
 
 public class StartActivity extends Activity implements ApiListener {
     private int step = 0;
@@ -41,6 +48,7 @@ public class StartActivity extends Activity implements ApiListener {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void handleApiResult(Object result) {
         if (step == 0) {
             if (Boolean.FALSE.equals(result)) {
@@ -48,8 +56,30 @@ public class StartActivity extends Activity implements ApiListener {
                 disableProgress();
                 enableUrlField();
             } else {
-                setStatus("Available");
+                setStatus("Getting user list");
+                step = 1;
+                ApiProvider.getUsers(this, this);
             }
+        } else if (step == 1) {
+            if(result == null){
+                setStatus("FAIL");
+                disableProgress();
+                return;
+            }
+
+            setStatus("Select user name");
+            disableProgress();
+
+            Map<String,Integer> users = (Map<String, Integer>) result;
+            String[] userNames = new String[]{};
+            userNames = users.keySet().toArray(userNames);
+
+            Spinner spinner = (Spinner) findViewById(R.id.spnUsers);
+            ArrayAdapter<CharSequence> adapter
+                    = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, userNames);
+
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
         }
     }
 
@@ -59,9 +89,10 @@ public class StartActivity extends Activity implements ApiListener {
         ApiProvider.checkServer(this, this);
     }
 
-    public void onBtSubmitUrl(View view){
+    public void onBtSubmitUrl(View view) {
         disableUrlField();
-        url = ((EditText)findViewById(R.id.etUrl)).getText().toString();
+        url = ((EditText) findViewById(R.id.etUrl)).getText().toString();
+        url = url.replaceFirst("/+$", "");
         checkServer();
     }
 

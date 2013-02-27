@@ -29,6 +29,20 @@
                 android:text="Submit"
                 android:id="@+id/btSubmitUrl" android:onClick="onBtSubmitUrl"/>
     </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_gravity="top">
+        <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/spnUsers" android:layout_weight="1" android:longClickable="false"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Button"
+                android:id="@+id/btUserOk"/>
+    </LinearLayout>
     <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
