@@ -15,7 +15,7 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" android:layout_gravity="top" android:id="@+id/layUrl"
-            android:visibility="gone">
+            android:visibility="gone" android:longClickable="true">
         <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -32,7 +32,8 @@
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" android:layout_gravity="top">
+            android:layout_height="wrap_content" android:layout_gravity="top" android:id="@+id/layUsers"
+            android:visibility="gone">
         <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,8 +41,9 @@
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/btUserOk"/>
+                android:text="Ok"
+                android:id="@+id/btUserOk"
+                android:onClick="onBtSubmitUser"/>
     </LinearLayout>
     <FrameLayout
             android:layout_width="fill_parent"

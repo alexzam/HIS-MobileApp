@@ -11,40 +11,36 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import az.his.android.hisapi.ApiListener;
 import az.his.android.hisapi.ApiProvider;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.Map;
 
 public class StartActivity extends Activity implements ApiListener {
     private int step = 0;
     private String url;
+    private Map<String, Integer> users;
+    private SharedPreferences sharedPref;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean isInstalled = sharedPref.getBoolean("bool_installed", false);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (!isInstalled) {
-            url = sharedPref.getString("str_url", "http://192.168.1.3/his");
+        url = sharedPref.getString("str_url", "http://192.168.1.3/his");
 
-            if (!ApiProvider.isNetworkReady(this)) {
-                // Network is needed for first run
-                setStatus("Network connection is needed for first launch.");
-                disableProgress();
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    finish();
-                }
+        if (!ApiProvider.isNetworkReady(this)) {
+            // Network is needed for first run
+            setStatus("Network connection is needed for first launch.");
+            enableProgress(false);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
                 finish();
             }
-
-            checkServer();
+            finish();
         }
+
+        checkServer();
     }
 
     @Override
@@ -53,7 +49,7 @@ public class StartActivity extends Activity implements ApiListener {
         if (step == 0) {
             if (Boolean.FALSE.equals(result)) {
                 setStatus("Unavailable. Please change URL if needed.");
-                disableProgress();
+                enableProgress(false);
                 enableUrlField();
             } else {
                 setStatus("Getting user list");
@@ -61,16 +57,19 @@ public class StartActivity extends Activity implements ApiListener {
                 ApiProvider.getUsers(this, this);
             }
         } else if (step == 1) {
-            if(result == null){
+            if (result == null) {
                 setStatus("FAIL");
-                disableProgress();
+                enableProgress(false);
                 return;
             }
 
-            setStatus("Select user name");
-            disableProgress();
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("str_url", url);
+            editor.commit();
 
-            Map<String,Integer> users = (Map<String, Integer>) result;
+            setStatus("Select user name");
+
+            users = (Map<String, Integer>) result;
             String[] userNames = new String[]{};
             userNames = users.keySet().toArray(userNames);
 
@@ -80,11 +79,15 @@ public class StartActivity extends Activity implements ApiListener {
 
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
+
+            enableProgress(false);
+            enableUsersField(true);
         }
     }
 
     private void checkServer() {
         ((TextView) findViewById(R.id.txtStatus)).setText("Checking " + url);
+        enableProgress(true);
         ApiProvider.setUrl(url);
         ApiProvider.checkServer(this, this);
     }
@@ -96,6 +99,18 @@ public class StartActivity extends Activity implements ApiListener {
         checkServer();
     }
 
+    public void onBtSubmitUser(View view) {
+        String name = (String) ((Spinner) findViewById(R.id.spnUsers)).getSelectedItem();
+        Integer id = users.get(name);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("str_username", name);
+        editor.putInt("int_userid", id);
+        editor.putBoolean("bool_installed", true);
+        editor.commit();
+        finish();
+    }
+
     private void enableUrlField() {
         ((EditText) findViewById(R.id.etUrl)).setText(url);
         findViewById(R.id.layUrl).setVisibility(View.VISIBLE);
@@ -105,8 +120,12 @@ public class StartActivity extends Activity implements ApiListener {
         findViewById(R.id.layUrl).setVisibility(View.GONE);
     }
 
-    private void disableProgress() {
-        findViewById(R.id.progressBar).setVisibility(View.GONE);
+    private void enableUsersField(boolean enable) {
+        findViewById(R.id.layUsers).setVisibility(enable ? View.VISIBLE : View.GONE);
+    }
+
+    private void enableProgress(boolean enable) {
+        findViewById(R.id.progressBar).setVisibility(enable ? View.VISIBLE : View.GONE);
     }
 
     private void setStatus(String text) {
