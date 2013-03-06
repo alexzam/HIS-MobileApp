@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import az.his.android.hisapi.ApiListener;
 import az.his.android.hisapi.ApiProvider;
+import az.his.android.persist.DbHelper;
 
 import java.util.Map;
 
@@ -47,6 +48,7 @@ public class StartActivity extends Activity implements ApiListener {
     @SuppressWarnings("unchecked")
     public void handleApiResult(Object result) {
         if (step == 0) {
+            // Check server result
             if (Boolean.FALSE.equals(result)) {
                 setStatus("Unavailable. Please change URL if needed.");
                 enableProgress(false);
@@ -57,6 +59,7 @@ public class StartActivity extends Activity implements ApiListener {
                 ApiProvider.getUsers(this, this);
             }
         } else if (step == 1) {
+            // Fetch users result
             if (result == null) {
                 setStatus("FAIL");
                 enableProgress(false);
@@ -82,6 +85,22 @@ public class StartActivity extends Activity implements ApiListener {
 
             enableProgress(false);
             enableUsersField(true);
+        } else if (step == 2) {
+            // Fetch categories result
+            if (result == null) {
+                setStatus("FAIL");
+                enableProgress(false);
+                return;
+            }
+
+            DbHelper dbHelper = new DbHelper(getApplicationContext());
+            dbHelper.replaceCats((Map<Integer, String>) result);
+
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("bool_installed", true);
+            editor.commit();
+
+            finish();
         }
     }
 
@@ -106,9 +125,13 @@ public class StartActivity extends Activity implements ApiListener {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("str_username", name);
         editor.putInt("int_userid", id);
-        editor.putBoolean("bool_installed", true);
         editor.commit();
-        finish();
+
+        enableUsersField(false);
+        enableProgress(true);
+        setStatus("Fetching categories...");
+        step = 2;
+        ApiProvider.getCategories(this, this, id);
     }
 
     private void enableUrlField() {

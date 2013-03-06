@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DbHelper extends SQLiteOpenHelper {
     public static final int VER = 1;
@@ -31,16 +32,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 .append(" INTEGER)");
 
         db.execSQL(sql.toString());
-
-        ContentValues values = new ContentValues();
-        values.put(CategoryColumns.NAME, "Test0");
-        values.put(CategoryColumns.FOREIGN_ID, "1");
-        db.insert(CategoryColumns.TABLE_NAME, null, values);
-
-        values = new ContentValues();
-        values.put(CategoryColumns.NAME, "Test1");
-        values.put(CategoryColumns.FOREIGN_ID, "0");
-        db.insert(CategoryColumns.TABLE_NAME, null, values);
     }
 
     @Override
@@ -78,5 +69,21 @@ public class DbHelper extends SQLiteOpenHelper {
                 null, null, null, null,
                 CategoryColumns.NAME
         );
+    }
+
+    public void replaceCats(Map<Integer, String> cats) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        db.delete(CategoryColumns.TABLE_NAME, "1=1", new String[]{});
+
+        for (Integer catId : cats.keySet()) {
+            ContentValues values = new ContentValues();
+            values.put(CategoryColumns.NAME, cats.get(catId));
+            values.put(CategoryColumns.FOREIGN_ID, catId);
+            db.insert(CategoryColumns.TABLE_NAME, null, values);
+        }
+
+        db.endTransaction();
+        db.close();
     }
 }
