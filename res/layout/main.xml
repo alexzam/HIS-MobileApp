@@ -3,21 +3,26 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-    >
-  <Spinner
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/spnCategory" android:layout_gravity="top"/>
-  <EditText
-      android:layout_width="113dp"
-      android:layout_height="wrap_content"
-      android:text="0"
-      android:id="@+id/etAmount" android:layout_gravity="center_horizontal|top" android:inputType="number|numberDecimal"
-      android:singleLine="true" android:textStyle="bold" android:selectAllOnFocus="true"/>
-  <Button
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Submit"
-      android:id="@+id/button" android:layout_gravity="center_horizontal"/>
+        >
+    <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spnCategory" android:layout_gravity="top"/>
+    <EditText
+            android:layout_width="113dp"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:id="@+id/etAmount" android:layout_gravity="center_horizontal|top"
+            android:inputType="number|numberDecimal"
+            android:singleLine="true" android:textStyle="bold" android:selectAllOnFocus="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:id="@+id/button" android:layout_gravity="center_horizontal"/>
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtAddTrStatus" android:layout_weight="1" android:gravity="bottom"/>
 </LinearLayout>
 

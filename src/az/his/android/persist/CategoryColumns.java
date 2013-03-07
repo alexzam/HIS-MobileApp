@@ -2,7 +2,7 @@ package az.his.android.persist;
 
 import android.provider.BaseColumns;
 
-public abstract class CategoryColumns implements BaseColumns {
+public interface CategoryColumns extends BaseColumns {
     public static final String TABLE_NAME = "cats";
 
     public static final String NAME = "name";

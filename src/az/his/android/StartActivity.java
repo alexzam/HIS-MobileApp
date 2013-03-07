@@ -5,10 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.*;
 import az.his.android.hisapi.ApiListener;
 import az.his.android.hisapi.ApiProvider;
 import az.his.android.persist.DbHelper;
@@ -94,7 +91,9 @@ public class StartActivity extends Activity implements ApiListener {
             }
 
             DbHelper dbHelper = new DbHelper(getApplicationContext());
-            dbHelper.replaceCats((Map<Integer, String>) result);
+            Map<Integer, String> cats = (Map<Integer, String>) result;
+            Toast.makeText(this, "Fetched " + cats.size() + " categories", 500).show();
+            dbHelper.replaceCats(cats);
 
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putBoolean("bool_installed", true);

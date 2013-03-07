@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,21 @@ public class DbHelper extends SQLiteOpenHelper {
                 .append(CategoryColumns.NAME)
                 .append(" TEXT, ")
                 .append(CategoryColumns.FOREIGN_ID)
+                .append(" INTEGER)");
+
+        db.execSQL(sql.toString());
+
+        sql = new StringBuilder();
+        sql.append("CREATE TABLE ")
+                .append(TransactColumns.TABLE_NAME)
+                .append(" (")
+                .append(TransactColumns._ID)
+                .append(" INTEGER PRIMARY KEY, ")
+                .append(TransactColumns.AMOUNT)
+                .append(" INTEGER, ")
+                .append(TransactColumns.CAT_ID)
+                .append(" INTEGER, ")
+                .append(TransactColumns.STAMP)
                 .append(" INTEGER)");
 
         db.execSQL(sql.toString());
@@ -63,12 +79,16 @@ public class DbHelper extends SQLiteOpenHelper {
                 CategoryColumns.FOREIGN_ID
         };
 
-        return db.query(
+        Cursor cursor = db.query(
                 CategoryColumns.TABLE_NAME,
                 proj,
                 null, null, null, null,
                 CategoryColumns.NAME
         );
+
+//        db.close();
+
+        return cursor;
     }
 
     public void replaceCats(Map<Integer, String> cats) {
@@ -85,5 +105,25 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.endTransaction();
         db.close();
+    }
+
+    public void addTransaction(Integer amount, Integer catId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TransactColumns.AMOUNT, amount);
+        values.put(TransactColumns.CAT_ID, catId);
+        values.put(TransactColumns.STAMP, (new Date()).getTime());
+        db.insert(CategoryColumns.TABLE_NAME, null, values);
+
+        db.close();
+    }
+
+    public long getTransactionNum() {
+        SQLiteDatabase db = getReadableDatabase();
+        long num = db.compileStatement("SELECT COUNT(*) FROM " + TransactColumns.TABLE_NAME).simpleQueryForLong();
+        db.close();
+
+        return num;
     }
 }

@@ -11,6 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 import az.his.android.persist.DbHelper;
 
 public class EnterTransactionActivity extends Activity {
@@ -39,6 +41,8 @@ public class EnterTransactionActivity extends Activity {
             dbHelper = new DbHelper(getApplicationContext());
             Cursor cursor = dbHelper.getCatsCursor();
 
+            Toast.makeText(this, "Got from DB: " + cursor.getCount() + " categories", 500).show();
+
             SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                     getApplicationContext(),
                     android.R.layout.simple_spinner_item,
@@ -49,6 +53,9 @@ public class EnterTransactionActivity extends Activity {
 
             Spinner spinner = (Spinner) findViewById(R.id.spnCategory);
             spinner.setAdapter(adapter);
+
+            long trNum = dbHelper.getTransactionNum();
+            ((TextView) findViewById(R.id.txtAddTrStatus)).setText("Transactions in DB: " + trNum);
         }
     }
 
