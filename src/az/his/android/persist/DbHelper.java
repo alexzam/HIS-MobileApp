@@ -94,16 +94,20 @@ public class DbHelper extends SQLiteOpenHelper {
     public void replaceCats(Map<Integer, String> cats) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
-        db.delete(CategoryColumns.TABLE_NAME, "1=1", new String[]{});
+        try {
+            db.delete(CategoryColumns.TABLE_NAME, "1=1", new String[]{});
 
-        for (Integer catId : cats.keySet()) {
-            ContentValues values = new ContentValues();
-            values.put(CategoryColumns.NAME, cats.get(catId));
-            values.put(CategoryColumns.FOREIGN_ID, catId);
-            db.insert(CategoryColumns.TABLE_NAME, null, values);
+            for (Integer catId : cats.keySet()) {
+                ContentValues values = new ContentValues();
+                values.put(CategoryColumns.NAME, cats.get(catId));
+                values.put(CategoryColumns.FOREIGN_ID, catId);
+                db.insert(CategoryColumns.TABLE_NAME, null, values);
+            }
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
-
-        db.endTransaction();
         db.close();
     }
 
