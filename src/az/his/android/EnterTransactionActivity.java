@@ -9,10 +9,9 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.*;
+import az.his.android.persist.CategoryColumns;
 import az.his.android.persist.DbHelper;
 
 public class EnterTransactionActivity extends Activity {
@@ -41,8 +40,6 @@ public class EnterTransactionActivity extends Activity {
             dbHelper = new DbHelper(getApplicationContext());
             Cursor cursor = dbHelper.getCatsCursor();
 
-            Toast.makeText(this, "Got from DB: " + cursor.getCount() + " categories", 500).show();
-
             SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                     getApplicationContext(),
                     android.R.layout.simple_spinner_item,
@@ -54,9 +51,24 @@ public class EnterTransactionActivity extends Activity {
             Spinner spinner = (Spinner) findViewById(R.id.spnCategory);
             spinner.setAdapter(adapter);
 
-            long trNum = dbHelper.getTransactionNum();
-            ((TextView) findViewById(R.id.txtAddTrStatus)).setText("Transactions in DB: " + trNum);
+            updateTrNumber();
         }
+    }
+
+    private void updateTrNumber() {
+        long trNum = dbHelper.getTransactionNum();
+        ((TextView) findViewById(R.id.txtAddTrStatus)).setText("Transactions in DB: " + trNum);
+    }
+
+    public void onBtSubmit(View view) {
+        int amount = Integer.parseInt(((EditText) findViewById(R.id.etAmount)).getText().toString());
+        Cursor item = (Cursor) ((Spinner) findViewById(R.id.spnCategory)).getSelectedItem();
+        int catId = item.getInt(item.getColumnIndex(CategoryColumns.FOREIGN_ID));
+        dbHelper.addTransaction(amount, catId);
+
+        Toast.makeText(this, "Transaction added.", 1000).show();
+        ((EditText) findViewById(R.id.etAmount)).setText("0");
+        updateTrNumber();
     }
 
     @Override

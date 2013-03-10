@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Submit"
-            android:id="@+id/button" android:layout_gravity="center_horizontal"/>
+            android:id="@+id/button" android:layout_gravity="center_horizontal" android:onClick="onBtSubmit"/>
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

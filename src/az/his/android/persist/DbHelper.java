@@ -113,12 +113,18 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void addTransaction(Integer amount, Integer catId) {
         SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
 
-        ContentValues values = new ContentValues();
-        values.put(TransactColumns.AMOUNT, amount);
-        values.put(TransactColumns.CAT_ID, catId);
-        values.put(TransactColumns.STAMP, (new Date()).getTime());
-        db.insert(CategoryColumns.TABLE_NAME, null, values);
+        try {
+            ContentValues values = new ContentValues();
+            values.put(TransactColumns.AMOUNT, amount);
+            values.put(TransactColumns.CAT_ID, catId);
+            values.put(TransactColumns.STAMP, (new Date()).getTime());
+            db.insert(TransactColumns.TABLE_NAME, null, values);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
 
         db.close();
     }
