@@ -3,9 +3,15 @@ package az.his.android.hisapi;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import az.his.android.persist.Transaction;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class ApiProvider {
     private static String url = null;
+
+    private static SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static void setUrl(String url) {
         ApiProvider.url = url;
@@ -46,20 +52,28 @@ public class ApiProvider {
 
     private static boolean syncActive = false;
 
-    private static boolean checkServerSync(Context context) {
-        syncActive = true;
-        final Boolean[] ret = new Boolean[1];
-        checkServer(context, new ApiListener() {
-            @Override
-            public void handleApiResult(Object result) {
-                ret[0] = (Boolean) result;
-                syncActive = false;
-            }
-        });
-        while (syncActive) try {
-            Thread.sleep(100);
-        } catch (InterruptedException ignored) {
+    @SuppressWarnings("unchecked")
+    public static void postTransactions(Context context, ApiListener listener, Integer uid,
+                                        List<Transaction> transactions) {
+        StringBuilder doc = new StringBuilder("<TransactionList uid=\"");
+        doc.append(uid)
+                .append("\">");
+
+        for (Transaction transaction : transactions) {
+            doc.append("<tr amount=\"")
+                    .append(transaction.getAmount())
+                    .append("\" cat=\"")
+                    .append(transaction.getCatId())
+                    .append("\" date=\"")
+                    .append(xmlDateFormat.format(transaction.getStamp()))
+                    .append("\"/>");
         }
-        return ret[0];
+        doc.append("</TransactionList>");
+
+        if (!isNetworkReady(context)) {
+            throw new IllegalStateException("Network went down");
+        }
+
+        (new PostTransactionsTask()).execute(url, listener, doc.toString());
     }
 }

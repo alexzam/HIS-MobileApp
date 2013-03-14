@@ -136,4 +136,42 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return num;
     }
+
+    public List<Transaction> getTransactions() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] proj = new String[]{
+                TransactColumns.STAMP,
+                TransactColumns.CAT_ID,
+                TransactColumns.AMOUNT
+        };
+
+        Cursor cursor = db.query(
+                TransactColumns.TABLE_NAME,
+                proj,
+                null, null, null, null,
+                null
+        );
+
+        List<Transaction> ret = new ArrayList<Transaction>();
+        while (cursor.moveToNext()) {
+            Transaction tr = new Transaction(cursor.getInt(2), cursor.getInt(1), cursor.getLong(0));
+            ret.add(tr);
+        }
+
+        cursor.close();
+        return ret;
+    }
+
+    public void cleanTransactions() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete(TransactColumns.TABLE_NAME, "1=1", null);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
 }

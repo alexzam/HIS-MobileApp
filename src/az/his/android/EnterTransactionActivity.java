@@ -11,10 +11,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import az.his.android.hisapi.ApiListener;
+import az.his.android.hisapi.ApiProvider;
 import az.his.android.persist.CategoryColumns;
 import az.his.android.persist.DbHelper;
 
-public class EnterTransactionActivity extends Activity {
+public class EnterTransactionActivity extends Activity implements ApiListener {
 
     private DbHelper dbHelper;
     private SharedPreferences sharedPref;
@@ -38,6 +40,8 @@ public class EnterTransactionActivity extends Activity {
             startActivity(new Intent(this, StartActivity.class));
         } else {
             dbHelper = new DbHelper(getApplicationContext());
+            ApiProvider.setUrl(sharedPref.getString("str_url", null));
+
             Cursor cursor = dbHelper.getCatsCursor();
 
             SimpleCursorAdapter adapter = new SimpleCursorAdapter(
@@ -85,7 +89,20 @@ public class EnterTransactionActivity extends Activity {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 break;
+
+            case R.id.menu_sync:
+                ApiProvider.postTransactions(this, this, sharedPref.getInt("int_userid", -1), dbHelper.getTransactions());
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void handleApiResult(Object result) {
+        if (result == Boolean.TRUE) {
+            Toast.makeText(this, "Transactions posted!", 1000).show();
+        }
+        dbHelper.cleanTransactions();
+        updateTrNumber();
     }
 }

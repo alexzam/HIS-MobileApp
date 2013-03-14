@@ -13,7 +13,7 @@ class FetchCatsTask extends HisApiTask {
         try {
             listener = (ApiListener) params[1];
 
-            Document doc = getXmlDocument(params[0] + "/api/cats?uid=" + params[2]);
+            Document doc = getXmlDocument(params[0] + "/api/cats?uid=" + params[2], "GET", null);
             NodeList catNodes = doc.getElementsByTagName("category");
             Map<Integer, String> cats = new HashMap<Integer, String>();
 

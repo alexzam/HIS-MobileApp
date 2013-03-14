@@ -7,13 +7,13 @@ import org.w3c.dom.NodeList;
 import java.util.HashMap;
 import java.util.Map;
 
-class FetchUsersTask extends HisApiTask{
+class FetchUsersTask extends HisApiTask {
     @Override
     protected Object doInBackground(Object... params) {
         try {
             listener = (ApiListener) params[1];
 
-            Document doc = getXmlDocument(params[0] + "/api/users");
+            Document doc = getXmlDocument(params[0] + "/api/users", "GET", null);
             NodeList userNodes = doc.getElementsByTagName("user");
             Map<String, Integer> users = new HashMap<String, Integer>();
 

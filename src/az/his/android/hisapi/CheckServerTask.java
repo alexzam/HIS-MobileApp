@@ -8,7 +8,7 @@ class CheckServerTask extends HisApiTask {
     protected Object doInBackground(Object... params) {
         try {
             listener = (ApiListener) params[1];
-            int res = getResponseCodeOnly((String) params[0]);
+            int res = getResponseCodeOnly((String) params[0], "GET", null);
 
             return res == 200;
         } catch (IOException e) {
