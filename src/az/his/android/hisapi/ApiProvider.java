@@ -11,7 +11,7 @@ import java.util.List;
 public class ApiProvider {
     private static String url = null;
 
-    private static SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat xmlDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public static void setUrl(String url) {
         ApiProvider.url = url;
@@ -49,8 +49,6 @@ public class ApiProvider {
         }
         (new FetchCatsTask()).execute(url, listener, uid);
     }
-
-    private static boolean syncActive = false;
 
     @SuppressWarnings("unchecked")
     public static void postTransactions(Context context, ApiListener listener, Integer uid,

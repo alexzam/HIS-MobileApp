@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DbHelper extends SQLiteOpenHelper {
-    public static final int VER = 1;
+    private static final int VER = 1;
     private static final String FILENAME = "AzHis.db";
 
     public DbHelper(Context context) {
@@ -54,22 +54,6 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
     }
 
-    public List<Category> getCats() {
-        Cursor cursor = getCatsCursor();
-
-        List<Category> ret = new ArrayList<Category>();
-        while (cursor.moveToNext()) {
-            Category category = new Category();
-            category.setId(cursor.getInt(0));
-            category.setName(cursor.getString(1));
-            category.setForeignId(cursor.getInt(2));
-            ret.add(category);
-        }
-
-        cursor.close();
-        return ret;
-    }
-
     public Cursor getCatsCursor() {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -79,16 +63,12 @@ public class DbHelper extends SQLiteOpenHelper {
                 CategoryColumns.FOREIGN_ID
         };
 
-        Cursor cursor = db.query(
+        return db.query(
                 CategoryColumns.TABLE_NAME,
                 proj,
                 null, null, null, null,
                 CategoryColumns.NAME
         );
-
-//        db.close();
-
-        return cursor;
     }
 
     public void replaceCats(Map<Integer, String> cats) {

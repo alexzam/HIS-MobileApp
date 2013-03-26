@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HIS Mobile</string>
+
+    <string name="timepref_set">Уст.</string>
+    <string name="timepref_cancel">Сброс</string>
+
+    <string name="main_btSubmit">Сохранить</string>
+    <string name="main_msg_transnum">Транзакций в базе: %d</string>
+    <string name="main_msg_transadded">Транзакция добавлена.</string>
+    <string name="main_msg_transsubmitted">Транзакции отправлены!</string>
+
+    <string name="start_url">URL сервера</string>
+    <string name="start_urlsubmit">OK</string>
+    <string name="start_usersubmit">OK</string>
+    <string name="start_msg_loading">Загрузка…</string>
+    <string name="start_msg_urlunavailable">Недоступно. Поменяйте URL сервера, если нужно.</string>
+    <string name="start_msg_getusers">Получение списка пользователей…</string>
+    <string name="start_msg_selectuser">Выберите пользователя</string>
+    <string name="start_msg_fail">FAIL</string>
+    <string name="start_msg_getcats">Получение категорий…</string>
+    <string name="start_msg_nonetwork">При первом запуске нужно подключение к серверу.</string>
+    <string name="start_msg_checkurl">Проверка %s</string>
+
+    <plurals name="start_msg_fetchedcats">
+        <item quantity="one">Получена %d категория</item>
+        <item quantity="few">Получены %d категории</item>
+        <item quantity="other">Получено %d категорий</item>
+    </plurals>
+
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_sync">Синхронизация</string>
+
+    <string name="settings_url">URL сервера</string>
+    <string name="settings_autosync">Авто-синхронизация</string>
+    <string name="settings_timesync">Время синхронизации</string>
+</resources>

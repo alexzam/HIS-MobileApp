@@ -12,7 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class TimePreference extends DialogPreference {
-    private Calendar calendar;
+    private final Calendar calendar;
     private TimePicker picker = null;
 
     public TimePreference(Context ctxt) {
@@ -26,8 +26,8 @@ public class TimePreference extends DialogPreference {
     public TimePreference(Context ctxt, AttributeSet attrs, int defStyle) {
         super(ctxt, attrs, defStyle);
 
-        setPositiveButtonText(R.string.set);
-        setNegativeButtonText(R.string.cancel);
+        setPositiveButtonText(R.string.timepref_set);
+        setNegativeButtonText(R.string.timepref_cancel);
         calendar = Calendar.getInstance();
     }
 

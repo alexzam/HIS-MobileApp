@@ -28,7 +28,7 @@ public class StartActivity extends Activity implements ApiListener {
 
         if (!ApiProvider.isNetworkReady(this)) {
             // Network is needed for first run
-            setStatus("Network connection is needed for first launch.");
+            setStatus(getString(R.string.start_msg_nonetwork));
             enableProgress(false);
             try {
                 Thread.sleep(2000);
@@ -47,18 +47,18 @@ public class StartActivity extends Activity implements ApiListener {
         if (step == 0) {
             // Check server result
             if (Boolean.FALSE.equals(result)) {
-                setStatus("Unavailable. Please change URL if needed.");
+                setStatus(getString(R.string.start_msg_urlunavailable));
                 enableProgress(false);
                 enableUrlField();
             } else {
-                setStatus("Getting user list");
+                setStatus(getString(R.string.start_msg_getusers));
                 step = 1;
                 ApiProvider.getUsers(this, this);
             }
         } else if (step == 1) {
             // Fetch users result
             if (result == null) {
-                setStatus("FAIL");
+                setStatus(getString(R.string.start_msg_fail));
                 enableProgress(false);
                 return;
             }
@@ -67,7 +67,7 @@ public class StartActivity extends Activity implements ApiListener {
             editor.putString("str_url", url);
             editor.commit();
 
-            setStatus("Select user name");
+            setStatus(getString(R.string.start_msg_selectuser));
 
             users = (Map<String, Integer>) result;
             String[] userNames = new String[]{};
@@ -85,14 +85,16 @@ public class StartActivity extends Activity implements ApiListener {
         } else if (step == 2) {
             // Fetch categories result
             if (result == null) {
-                setStatus("FAIL");
+                setStatus(getString(R.string.start_msg_fail));
                 enableProgress(false);
                 return;
             }
 
             DbHelper dbHelper = new DbHelper(getApplicationContext());
             Map<Integer, String> cats = (Map<Integer, String>) result;
-            Toast.makeText(this, "Fetched " + cats.size() + " categories", 500).show();
+            int catNum = cats.size();
+            String msg = getResources().getQuantityString(R.string.start_msg_fetchedcats, catNum, catNum);
+            Toast.makeText(this, msg, 500).show();
             dbHelper.replaceCats(cats);
 
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -104,20 +106,20 @@ public class StartActivity extends Activity implements ApiListener {
     }
 
     private void checkServer() {
-        ((TextView) findViewById(R.id.txtStatus)).setText("Checking " + url);
+        ((TextView) findViewById(R.id.txtStatus)).setText(getString(R.string.start_msg_checkurl, url));
         enableProgress(true);
         ApiProvider.setUrl(url);
         ApiProvider.checkServer(this, this);
     }
 
-    public void onBtSubmitUrl(View view) {
+    public void onBtSubmitUrl(@SuppressWarnings("UnusedParameters") View view) {
         disableUrlField();
         url = ((EditText) findViewById(R.id.etUrl)).getText().toString();
         url = url.replaceFirst("/+$", "");
         checkServer();
     }
 
-    public void onBtSubmitUser(View view) {
+    public void onBtSubmitUser(@SuppressWarnings("UnusedParameters") View view) {
         String name = (String) ((Spinner) findViewById(R.id.spnUsers)).getSelectedItem();
         Integer id = users.get(name);
 
@@ -128,7 +130,7 @@ public class StartActivity extends Activity implements ApiListener {
 
         enableUsersField(false);
         enableProgress(true);
-        setStatus("Fetching categories...");
+        setStatus(getString(R.string.start_msg_getcats));
         step = 2;
         ApiProvider.getCategories(this, this, id);
     }

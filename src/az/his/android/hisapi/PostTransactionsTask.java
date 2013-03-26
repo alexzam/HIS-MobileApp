@@ -11,7 +11,7 @@ class PostTransactionsTask extends HisApiTask {
             int code = getResponseCodeOnly(params[0] + "/api/trans", "POST", (String) params[2]);
             return code == 201;
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         return null;

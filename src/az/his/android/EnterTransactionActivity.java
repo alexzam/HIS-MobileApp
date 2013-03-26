@@ -61,16 +61,16 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
 
     private void updateTrNumber() {
         long trNum = dbHelper.getTransactionNum();
-        ((TextView) findViewById(R.id.txtAddTrStatus)).setText("Transactions in DB: " + trNum);
+        ((TextView) findViewById(R.id.txtAddTrStatus)).setText(getString(R.string.main_msg_transnum, trNum));
     }
 
-    public void onBtSubmit(View view) {
+    public void onBtSubmit(@SuppressWarnings("UnusedParameters") View view) {
         int amount = Integer.parseInt(((EditText) findViewById(R.id.etAmount)).getText().toString());
         Cursor item = (Cursor) ((Spinner) findViewById(R.id.spnCategory)).getSelectedItem();
         int catId = item.getInt(item.getColumnIndex(CategoryColumns.FOREIGN_ID));
         dbHelper.addTransaction(amount, catId);
 
-        Toast.makeText(this, "Transaction added.", 1000).show();
+        Toast.makeText(this, getString(R.string.main_msg_transadded), 1000).show();
         ((EditText) findViewById(R.id.etAmount)).setText("0");
         updateTrNumber();
     }
@@ -100,7 +100,7 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
     @Override
     public void handleApiResult(Object result) {
         if (result == Boolean.TRUE) {
-            Toast.makeText(this, "Transactions posted!", 1000).show();
+            Toast.makeText(this, getString(R.string.main_msg_transsubmitted), 1000).show();
         }
         dbHelper.cleanTransactions();
         updateTrNumber();

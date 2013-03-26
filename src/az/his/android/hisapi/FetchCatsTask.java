@@ -1,11 +1,9 @@
 package az.his.android.hisapi;
 
+import android.util.SparseArray;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
-
-import java.util.HashMap;
-import java.util.Map;
 
 class FetchCatsTask extends HisApiTask {
     @Override
@@ -15,7 +13,7 @@ class FetchCatsTask extends HisApiTask {
 
             Document doc = getXmlDocument(params[0] + "/api/cats?uid=" + params[2], "GET", null);
             NodeList catNodes = doc.getElementsByTagName("category");
-            Map<Integer, String> cats = new HashMap<Integer, String>();
+            SparseArray<String> cats = new SparseArray<String>();
 
             for (int i = 0; i < catNodes.getLength(); i++) {
                 NamedNodeMap attributes = catNodes.item(i).getAttributes();
@@ -25,7 +23,7 @@ class FetchCatsTask extends HisApiTask {
             }
             return cats;
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return null;
     }

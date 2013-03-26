@@ -3,9 +3,9 @@ package az.his.android.persist;
 import java.util.Date;
 
 public class Transaction {
-    private int amount;
-    private int catId;
-    private Date stamp;
+    private final int amount;
+    private final int catId;
+    private final Date stamp;
 
     public Transaction(int amount, int catId, long stamp) {
         this.amount = amount;

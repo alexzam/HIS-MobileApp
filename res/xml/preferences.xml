@@ -3,19 +3,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
             android:key="str_url"
-            android:title="Server URL"
+            android:title="@string/settings_url"
             android:inputType="textUri"
             android:defaultValue="http://192.168.1.3/his-test"
             />
 
     <CheckBoxPreference
             android:key="ck_sync"
-            android:title="Enable auto sync"
+            android:title="@string/settings_autosync"
             android:defaultValue="true"/>
 
     <az.his.android.TimePreference
             android:key="time_sync"
-            android:title="@string/pref_time_sync"
+            android:title="@string/settings_timesync"
             android:dependency="ck_sync"
             android:defaultValue="0"/>
 </PreferenceScreen>

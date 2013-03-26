@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HISMobile</string>
-    <string name="pref_time_sync">Sync time</string>
-    <string name="set">Set</string>
-    <string name="cancel">Cancel</string>
+    <string name="app_name">HIS Mobile</string>
+
+    <string name="timepref_set">Set</string>
+    <string name="timepref_cancel">Cancel</string>
+
+    <string name="main_btSubmit">Submit</string>
+    <string name="main_msg_transnum">Transactions in DB: %d</string>
+    <string name="main_msg_transadded">Transaction added.</string>
+    <string name="main_msg_transsubmitted">Transactions submitted!</string>
+
+    <string name="start_url">URL</string>
+    <string name="start_urlsubmit">Submit</string>
+    <string name="start_usersubmit">OK</string>
+    <string name="start_msg_loading">Loading…</string>
+    <string name="start_msg_urlunavailable">Unavailable. Please change URL if needed.</string>
+    <string name="start_msg_getusers">Getting user list</string>
+    <string name="start_msg_selectuser">Select user name</string>
+    <string name="start_msg_fail">FAIL</string>
+    <string name="start_msg_getcats">Fetching categories…</string>
+    <string name="start_msg_nonetwork">Network connection is needed for first launch.</string>
+    <string name="start_msg_fetchedcats">Fetched %d categories</string>
+    <string name="start_msg_checkurl">Checking %s</string>
+
+    <string name="menu_settings">Settings</string>
+    <string name="menu_sync">Sync now</string>
+
+    <string name="settings_url">Server URL</string>
+    <string name="settings_autosync">Enable auto sync</string>
+    <string name="settings_timesync">Sync time</string>
 </resources>

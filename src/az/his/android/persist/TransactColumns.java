@@ -2,7 +2,7 @@ package az.his.android.persist;
 
 import android.provider.BaseColumns;
 
-public interface TransactColumns extends BaseColumns {
+interface TransactColumns extends BaseColumns {
     public static final String TABLE_NAME = "transact";
 
     public static final String AMOUNT = "amount";
