@@ -20,8 +20,12 @@
     <string name="start_msg_fail">FAIL</string>
     <string name="start_msg_getcats">Fetching categories…</string>
     <string name="start_msg_nonetwork">Network connection is needed for first launch.</string>
-    <string name="start_msg_fetchedcats">Fetched %d categories</string>
     <string name="start_msg_checkurl">Checking %s</string>
+
+    <plurals name="start_msg_fetchedcats">
+        <item quantity="one">Fetched %d categorie</item>
+        <item quantity="other">Fetched %d categories</item>
+    </plurals>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_sync">Sync now</string>

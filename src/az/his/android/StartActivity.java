@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.*;
 import az.his.android.hisapi.ApiListener;
@@ -91,9 +92,9 @@ public class StartActivity extends Activity implements ApiListener {
             }
 
             DbHelper dbHelper = new DbHelper(getApplicationContext());
-            Map<Integer, String> cats = (Map<Integer, String>) result;
+            SparseArray<String> cats = (SparseArray<String>) result;
             int catNum = cats.size();
-            String msg = getResources().getQuantityString(R.string.start_msg_fetchedcats, catNum, catNum);
+            String msg = getResources().getQuantityString(R.plurals.start_msg_fetchedcats, catNum, catNum);
             Toast.makeText(this, msg, 500).show();
             dbHelper.replaceCats(cats);
 

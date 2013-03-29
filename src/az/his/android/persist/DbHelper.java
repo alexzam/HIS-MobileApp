@@ -5,11 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class DbHelper extends SQLiteOpenHelper {
     private static final int VER = 1;
@@ -71,16 +71,16 @@ public class DbHelper extends SQLiteOpenHelper {
         );
     }
 
-    public void replaceCats(Map<Integer, String> cats) {
+    public void replaceCats(SparseArray<String> cats) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
             db.delete(CategoryColumns.TABLE_NAME, "1=1", new String[]{});
 
-            for (Integer catId : cats.keySet()) {
+            for (int i = 0; i < cats.size(); i++) {
                 ContentValues values = new ContentValues();
-                values.put(CategoryColumns.NAME, cats.get(catId));
-                values.put(CategoryColumns.FOREIGN_ID, catId);
+                values.put(CategoryColumns.NAME, cats.valueAt(i));
+                values.put(CategoryColumns.FOREIGN_ID, cats.keyAt(i));
                 db.insert(CategoryColumns.TABLE_NAME, null, values);
             }
 
