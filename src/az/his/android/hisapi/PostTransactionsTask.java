@@ -8,7 +8,7 @@ class PostTransactionsTask extends HisApiTask {
         listener = (ApiListener) params[1];
 
         try {
-            int code = getResponseCodeOnly(params[0] + "/api/trans", "POST", (String) params[2]);
+            int code = NetworkUtils.getResponseCodeOnly(params[0] + "/api/trans", "POST", (String) params[2]);
             return code == 201;
         } catch (IOException e) {
             e.printStackTrace();

@@ -13,7 +13,7 @@ class FetchUsersTask extends HisApiTask {
         try {
             listener = (ApiListener) params[1];
 
-            Document doc = getXmlDocument(params[0] + "/api/users", "GET", null);
+            Document doc = NetworkUtils.getXmlDocument(params[0] + "/api/users", "GET", null);
             NodeList userNodes = doc.getElementsByTagName("user");
             Map<String, Integer> users = new HashMap<String, Integer>();
 

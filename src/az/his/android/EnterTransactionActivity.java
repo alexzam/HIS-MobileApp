@@ -39,6 +39,8 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
         if (!isInstalled) {
             startActivity(new Intent(this, StartActivity.class));
         } else {
+            startService(new Intent(this, SyncService.class));
+
             dbHelper = new DbHelper(getApplicationContext());
             ApiProvider.setUrl(sharedPref.getString("str_url", null));
 
@@ -91,7 +93,7 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
                 break;
 
             case R.id.menu_sync:
-                ApiProvider.postTransactions(this, this, sharedPref.getInt("int_userid", -1), dbHelper.getTransactions());
+                ApiProvider.postTransactions(this, this, sharedPref.getInt("int_userid", -1), dbHelper.getTransactions(), true);
                 break;
         }
         return super.onOptionsItemSelected(item);

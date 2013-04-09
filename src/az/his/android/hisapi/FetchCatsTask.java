@@ -11,7 +11,7 @@ class FetchCatsTask extends HisApiTask {
         try {
             listener = (ApiListener) params[1];
 
-            Document doc = getXmlDocument(params[0] + "/api/cats?uid=" + params[2], "GET", null);
+            Document doc = NetworkUtils.getXmlDocument(params[0] + "/api/cats?uid=" + params[2], "GET", null);
             NodeList catNodes = doc.getElementsByTagName("category");
             SparseArray<String> cats = new SparseArray<String>();
 

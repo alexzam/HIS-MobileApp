@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import az.his.android.persist.Transaction;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class ApiProvider {
 
     @SuppressWarnings("unchecked")
     public static void postTransactions(Context context, ApiListener listener, Integer uid,
-                                        List<Transaction> transactions) {
+                                        List<Transaction> transactions, boolean async) {
         StringBuilder doc = new StringBuilder("<TransactionList uid=\"");
         doc.append(uid)
                 .append("\">");
@@ -72,6 +73,15 @@ public class ApiProvider {
             throw new IllegalStateException("Network went down");
         }
 
-        (new PostTransactionsTask()).execute(url, listener, doc.toString());
+        if (async) {
+            new PostTransactionsTask().execute(url, listener, doc.toString());
+        } else {
+            try {
+                int code = NetworkUtils.getResponseCodeOnly(url + "/api/trans", "POST", doc.toString());
+                listener.handleApiResult(code == 201);
+            } catch (IOException e) {
+                listener.handleApiResult(Boolean.FALSE);
+            }
+        }
     }
 }
