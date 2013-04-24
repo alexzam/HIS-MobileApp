@@ -103,8 +103,8 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
     public void handleApiResult(Object result) {
         if (result == Boolean.TRUE) {
             Toast.makeText(this, getString(R.string.main_msg_transsubmitted), 1000).show();
+            dbHelper.cleanTransactions();
+            updateTrNumber();
         }
-        dbHelper.cleanTransactions();
-        updateTrNumber();
     }
 }
