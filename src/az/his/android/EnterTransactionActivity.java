@@ -29,6 +29,8 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        SyncService.checkState(this);
     }
 
     @Override

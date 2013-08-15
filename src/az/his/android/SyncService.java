@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
@@ -23,6 +24,11 @@ public class SyncService extends Service implements ApiListener {
     private Timer timer;
     private TimerTask task;
     private DbHelper dbHelper;
+    private static boolean started = false;
+
+    public static boolean isStarted() {
+        return started;
+    }
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -31,6 +37,7 @@ public class SyncService extends Service implements ApiListener {
     @Override
     public void onCreate() {
         Log.d(LOGTAG, "Service created");
+        started = true;
         setTimer();
     }
 
@@ -43,6 +50,7 @@ public class SyncService extends Service implements ApiListener {
             task = new TimerTask() {
                 @Override
                 public void run() {
+                    timer = null;
                     sync();
                 }
             };
@@ -50,7 +58,7 @@ public class SyncService extends Service implements ApiListener {
 
         Calendar cal = Calendar.getInstance();
         int hour = 0;
-        int minute = 31;
+        int minute = 59;
 
         Log.d(LOGTAG, "Setting timer to " + hour + ":" + minute);
         cal.set(Calendar.HOUR_OF_DAY, hour); // TODO Get from properties
@@ -102,5 +110,10 @@ public class SyncService extends Service implements ApiListener {
         }
         setTimer();
         dbHelper = null;
+    }
+
+    public static void checkState(Context context) {
+        if (isStarted()) return;
+        context.startService(new Intent(context, SyncService.class));
     }
 }
