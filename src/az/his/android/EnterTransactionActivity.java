@@ -47,6 +47,7 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
             ApiProvider.setUrl(sharedPref.getString("str_url", null));
 
             Cursor cursor = dbHelper.getCatsCursor();
+            startManagingCursor(cursor);
 
             SimpleCursorAdapter adapter = new SimpleCursorAdapter(
                     getApplicationContext(),

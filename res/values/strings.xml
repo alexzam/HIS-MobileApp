@@ -33,4 +33,5 @@
     <string name="settings_url">Server URL</string>
     <string name="settings_autosync">Enable auto sync</string>
     <string name="settings_timesync">Sync time</string>
+    <string name="settings_ssid">SSID of WiFi network with server</string>
 </resources>

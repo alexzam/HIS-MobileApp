@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -25,6 +26,9 @@ public class SyncService extends Service implements ApiListener {
     private TimerTask task;
     private DbHelper dbHelper;
     private static boolean started = false;
+    private boolean oldWifiEnabled;
+
+    private static SyncService self = null;
 
     public static boolean isStarted() {
         return started;
@@ -38,30 +42,45 @@ public class SyncService extends Service implements ApiListener {
     public void onCreate() {
         Log.d(LOGTAG, "Service created");
         started = true;
+        self = this;
         setTimer();
     }
 
     private void setTimer() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (timer == null) {
-            Log.d(LOGTAG, "Creating timer");
-            timer = new Timer();
-            task = new TimerTask() {
-                @Override
-                public void run() {
-                    timer = null;
-                    sync();
-                }
-            };
+        if (timer != null) {
+            timer.cancel();
+        }
+        Log.d(LOGTAG, "Creating timer");
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                timer = null;
+                sync();
+            }
+        };
+
+        if (!sharedPref.getBoolean("ck_sync", true)) {
+            Log.i(LOGTAG, "Auto-sync disabled");
+            if (timer != null) {
+                Log.i(LOGTAG, "Stopping timer");
+                timer.cancel();
+                timer = null;
+            }
+            return;
         }
 
+        long syncStamp = sharedPref.getLong("time_sync", 0);
         Calendar cal = Calendar.getInstance();
-        int hour = 0;
-        int minute = 59;
+        cal.setTimeInMillis(syncStamp);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        cal = Calendar.getInstance();
 
         Log.d(LOGTAG, "Setting timer to " + hour + ":" + minute);
-        cal.set(Calendar.HOUR_OF_DAY, hour); // TODO Get from properties
+        cal.set(Calendar.HOUR_OF_DAY, hour);
         cal.set(Calendar.MINUTE, minute);
 
         if (cal.before(Calendar.getInstance())) {
@@ -83,37 +102,78 @@ public class SyncService extends Service implements ApiListener {
             setTimer();
             return;
         }
+
+        WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+        oldWifiEnabled = wifiManager.isWifiEnabled();
+        if (!oldWifiEnabled) {
+            Log.i(LOGTAG, "Turning WiFi on...");
+            wifiManager.setWifiEnabled(true);
+            try {
+                Thread.sleep(30000, 0);
+            } catch (InterruptedException ignored) {
+            }
+        }
+
+        String ssid = wifiManager.getConnectionInfo().getSSID();
+        if (ssid == null || ssid.equals("")) {
+            Log.i(LOGTAG, "No WiFi connection.");
+            // TODO Strings to res
+            makeNotification("Синхронизация не удалась", "Нет WiFi соединения");
+            resetTimer();
+            return;
+        }
+
+        String confSsid = sharedPref.getString("str_ssid", null);
+        if (confSsid != null && !confSsid.equals("") && !confSsid.equals(ssid)) {
+            Log.i(LOGTAG, "Not home WiFi network: " + ssid);
+            // TODO Strings to res
+            makeNotification("Синхронизация не удалась", "Не та сеть. " + ssid + ", а должна быть " + confSsid);
+            resetTimer();
+            return;
+        }
+
         ApiProvider.postTransactions(this, this, sharedPref.getInt("int_userid", -1), dbHelper.getTransactions(), false);
     }
 
     @Override
     public void handleApiResult(Object result) {
-        // TODO Clever WiFi management
         if (result == Boolean.TRUE) {
-            PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, EnterTransactionActivity.class), 0);
-            // TODO correct intent
-
-            Notification notification = new Notification(
-                    android.R.drawable.stat_notify_sync,
-                    "Синхронизация удалась",
-                    System.currentTimeMillis());
-
-            notification.setLatestEventInfo(this,
-                    "Синхронизация удалась",        // TODO Strings to res
-                    "Транзакции отправлены на сервер",
-                    intent);
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(1, notification);
+            // TODO Strings to res
+            makeNotification("Синхронизация удалась", "Транзакции отправлены на сервер");
 
             dbHelper.cleanTransactions();
         }
+
+        resetTimer();
+    }
+
+    private void makeNotification(String tickerText, String contentText) {
+        PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, EnterTransactionActivity.class), 0);
+        // TODO correct intent
+
+        Notification notification = new Notification(
+                android.R.drawable.stat_notify_sync,
+                tickerText,
+                System.currentTimeMillis());
+
+        notification.setLatestEventInfo(this, tickerText, contentText, intent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+
+    private void resetTimer() {
+        if (!oldWifiEnabled) {
+            Log.i(LOGTAG, "Turning WiFi off.");
+            ((WifiManager) this.getSystemService(Context.WIFI_SERVICE)).setWifiEnabled(false);
+        }
+
         setTimer();
         dbHelper = null;
     }
 
     public static void checkState(Context context) {
-        if (isStarted()) return;
-        context.startService(new Intent(context, SyncService.class));
+        if (isStarted()) self.setTimer();
+        else context.startService(new Intent(context, SyncService.class));
     }
 }

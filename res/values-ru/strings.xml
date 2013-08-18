@@ -34,4 +34,5 @@
     <string name="settings_url">URL сервера</string>
     <string name="settings_autosync">Авто-синхронизация</string>
     <string name="settings_timesync">Время синхронизации</string>
+    <string name="settings_ssid">SSID сети WiFi для поиска сервера</string>
 </resources>

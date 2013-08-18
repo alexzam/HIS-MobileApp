@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private final List<String> summShowPrefs = Arrays.asList("str_url");
+    private final List<String> summShowPrefs = Arrays.asList("str_url", "str_ssid");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     protected void onPause() {
         super.onPause();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+
+        SyncService.checkState(this);
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
