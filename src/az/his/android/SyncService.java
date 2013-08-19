@@ -115,6 +115,7 @@ public class SyncService extends Service implements ApiListener {
         }
 
         String ssid = wifiManager.getConnectionInfo().getSSID();
+
         if (ssid == null || ssid.equals("")) {
             Log.i(LOGTAG, "No WiFi connection.");
             // TODO Strings to res
@@ -122,6 +123,8 @@ public class SyncService extends Service implements ApiListener {
             resetTimer();
             return;
         }
+
+        ssid = ssid.replaceAll("^\" | \"$", "");
 
         String confSsid = sharedPref.getString("str_ssid", null);
         if (confSsid != null && !confSsid.equals("") && !confSsid.equals(ssid)) {
@@ -142,6 +145,8 @@ public class SyncService extends Service implements ApiListener {
             makeNotification("Синхронизация удалась", "Транзакции отправлены на сервер");
 
             dbHelper.cleanTransactions();
+        } else {
+            makeNotification("Синхронизация не удалась", "Сервер не доступен");
         }
 
         resetTimer();
@@ -156,7 +161,7 @@ public class SyncService extends Service implements ApiListener {
                 tickerText,
                 System.currentTimeMillis());
 
-        notification.setLatestEventInfo(this, tickerText, contentText, intent);
+        notification.setLatestEventInfo(this, "HIS Mobile", tickerText + ":" + contentText, intent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
