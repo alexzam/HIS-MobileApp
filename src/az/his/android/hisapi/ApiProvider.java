@@ -60,7 +60,7 @@ public class ApiProvider {
 
         for (Transaction transaction : transactions) {
             doc.append("<tr amount=\"")
-                    .append(transaction.getAmount())
+                    .append(-transaction.getAmount())
                     .append("\" cat=\"")
                     .append(transaction.getCatId())
                     .append("\" date=\"")
