@@ -74,14 +74,14 @@ public class SyncService extends Service implements ApiListener {
 
         long syncStamp = sharedPref.getLong("time_sync", 0);
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(syncStamp);
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int minute = cal.get(Calendar.MINUTE);
-        cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 
-        Log.d(LOGTAG, "Setting timer to " + hour + ":" + minute);
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.MINUTE, minute);
+        cal.add(Calendar.MILLISECOND, (int) syncStamp);
+
+        Log.d(LOGTAG, "Setting timer to " + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE));
 
         if (cal.before(Calendar.getInstance())) {
             Log.d(LOGTAG, "  ... of tomorrow");

@@ -5,15 +5,18 @@ import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class TimePreference extends DialogPreference {
-    private final Calendar calendar;
+    public static final String LOGTAG = "HIS-Time-Pref";
+
+    private Calendar calendar;
     private TimePicker picker = null;
+    private java.text.DateFormat timeFormat;
 
     public TimePreference(Context ctxt) {
         this(ctxt, null);
@@ -28,12 +31,14 @@ public class TimePreference extends DialogPreference {
 
         setPositiveButtonText(R.string.timepref_set);
         setNegativeButtonText(R.string.timepref_cancel);
-        calendar = Calendar.getInstance();
+
+        timeFormat = DateFormat.getTimeFormat(getContext());
     }
 
     @Override
     protected View onCreateDialogView() {
         picker = new TimePicker(getContext());
+        picker.setIs24HourView(DateFormat.is24HourFormat(getContext()));
         return (picker);
     }
 
@@ -51,13 +56,25 @@ public class TimePreference extends DialogPreference {
         if (positiveResult) {
             calendar.set(Calendar.HOUR_OF_DAY, picker.getCurrentHour());
             calendar.set(Calendar.MINUTE, picker.getCurrentMinute());
+            Log.d(LOGTAG, "Calendar set hour: " + picker.getCurrentHour() + ", hour in cal: " + calendar.get(Calendar.HOUR_OF_DAY) + ". Date: " + calendar.getTime());
+            Log.d(LOGTAG, "j.u.Date TZ: " + calendar.getTime().getTimezoneOffset());
 
             setSummary(getSummary());
-            if (callChangeListener(calendar.getTimeInMillis())) {
-                persistLong(calendar.getTimeInMillis());
+            int val = getNormalValue(calendar);
+            if (callChangeListener(val)) {
+                persistLong(val);
                 notifyChanged();
             }
         }
+    }
+
+    private int getNormalValue(Calendar cal) {
+        Calendar cal2 = Calendar.getInstance();
+        cal2.set(Calendar.HOUR_OF_DAY, 0);
+        cal2.set(Calendar.MINUTE, 0);
+        cal2.set(Calendar.SECOND, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
+        return (int) (cal.getTimeInMillis() - cal2.getTimeInMillis());
     }
 
     @Override
@@ -67,19 +84,25 @@ public class TimePreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
+        long val = 0;
         if (restoreValue) {
-            if (defaultValue == null) {
-                calendar.setTimeInMillis(getPersistedLong(System.currentTimeMillis()));
-            } else {
-                calendar.setTimeInMillis(Long.parseLong(getPersistedString((String) defaultValue)));
-            }
+            val = getPersistedLong(0);
         } else {
             if (defaultValue == null) {
-                calendar.setTimeInMillis(System.currentTimeMillis());
+                val = getNormalValue(Calendar.getInstance());
             } else {
-                calendar.setTimeInMillis(Long.parseLong((String) defaultValue));
+                val = Long.parseLong((String) defaultValue);
             }
         }
+
+        calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        calendar.add(Calendar.MILLISECOND, (int) val);
+        calendar.set(Calendar.MILLISECOND, 0);
+
         setSummary(getSummary());
     }
 
@@ -88,6 +111,8 @@ public class TimePreference extends DialogPreference {
         if (calendar == null) {
             return null;
         }
-        return DateFormat.getTimeFormat(getContext()).format(new Date(calendar.getTimeInMillis()));
+        Log.d(LOGTAG, "Setting date " + calendar.getTime() + ". Format TZ: " + DateFormat.getTimeFormat(getContext()).getTimeZone());
+        Log.d(LOGTAG, "Calendar TZ: " + calendar.getTimeZone());
+        return timeFormat.format(calendar.getTime());
     }
 }
