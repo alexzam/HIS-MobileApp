@@ -124,7 +124,7 @@ public class SyncService extends Service implements ApiListener {
             return;
         }
 
-        ssid = ssid.replaceAll("^\" | \"$", "");
+        ssid = ssid.replaceAll("^\"|\"$", "");
 
         String confSsid = sharedPref.getString("str_ssid", null);
         if (confSsid != null && !confSsid.equals("") && !confSsid.equals(ssid)) {
