@@ -1,6 +1,5 @@
 package az.his.android;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import az.his.android.hisapi.ApiListener;
 import az.his.android.hisapi.ApiProvider;
@@ -23,7 +23,6 @@ import java.util.TimerTask;
 public class SyncService extends Service implements ApiListener {
     public static final String LOGTAG = "HIS-Sync-Service";
     private Timer timer;
-    private TimerTask task;
     private DbHelper dbHelper;
     private static boolean started = false;
     private boolean oldWifiEnabled;
@@ -54,7 +53,7 @@ public class SyncService extends Service implements ApiListener {
         }
         Log.d(LOGTAG, "Creating timer");
         timer = new Timer();
-        task = new TimerTask() {
+        TimerTask task = new TimerTask() {
             @Override
             public void run() {
                 timer = null;
@@ -156,15 +155,16 @@ public class SyncService extends Service implements ApiListener {
         PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, EnterTransactionActivity.class), 0);
         // TODO correct intent
 
-        Notification notification = new Notification(
-                android.R.drawable.stat_notify_sync,
-                tickerText,
-                System.currentTimeMillis());
-
-        notification.setLatestEventInfo(this, "HIS Mobile", tickerText + ":" + contentText, intent);
+        NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this);
+        notBuilder.setAutoCancel(true)
+                .setSmallIcon(android.R.drawable.stat_notify_sync)
+                .setContentTitle("HIS Mobile")
+                .setContentText(tickerText + ":" + contentText)
+                .setTicker(tickerText)
+                .setContentIntent(intent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
+        notificationManager.notify(1, notBuilder.build());
     }
 
     private void resetTimer() {
