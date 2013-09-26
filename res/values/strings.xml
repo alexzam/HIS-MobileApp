@@ -9,6 +9,8 @@
     <string name="main_msg_transnum">Transactions in DB: %d</string>
     <string name="main_msg_transadded">Transaction added.</string>
     <string name="main_msg_transsubmitted">Transactions submitted!</string>
+    <string name="main_msg_notsched">Not scheduled</string>
+    <string name="main_msg_sched">Scheduled to %s</string>
 
     <string name="start_url">URL</string>
     <string name="start_urlsubmit">Submit</string>

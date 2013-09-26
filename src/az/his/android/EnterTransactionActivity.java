@@ -89,9 +89,9 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
         Date time = SyncService.getScheduledTime();
 
         if (time == null) {
-            statusStr.append("Not scheduled");
+            statusStr.append(getString(R.string.main_msg_notsched));
         } else {
-            statusStr.append("Scheduled to ").append(statusDateFormat.format(time));
+            statusStr.append(getString(R.string.main_msg_sched, statusDateFormat.format(time)));
         }
 
         statusStr.append("\n");
