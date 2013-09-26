@@ -28,6 +28,7 @@ public class SyncService extends Service implements ApiListener {
     private boolean oldWifiEnabled;
 
     private static SyncService self = null;
+    private Date scheduledTime;
 
     public static boolean isStarted() {
         return started;
@@ -89,6 +90,7 @@ public class SyncService extends Service implements ApiListener {
 
         Date time = cal.getTime();
         timer.schedule(task, time);
+        scheduledTime = time;
         Log.d(LOGTAG, "Timer set to " + time);
     }
 
@@ -153,7 +155,6 @@ public class SyncService extends Service implements ApiListener {
 
     private void makeNotification(String tickerText, String contentText) {
         PendingIntent intent = PendingIntent.getActivity(this, 0, new Intent(this, EnterTransactionActivity.class), 0);
-        // TODO correct intent
 
         NotificationCompat.Builder notBuilder = new NotificationCompat.Builder(this);
         notBuilder.setAutoCancel(true)
@@ -180,5 +181,13 @@ public class SyncService extends Service implements ApiListener {
     public static void checkState(Context context) {
         if (isStarted()) self.setTimer();
         else context.startService(new Intent(context, SyncService.class));
+    }
+
+    public static Date getScheduledTime() {
+        if (self == null) return null;
+
+        if (self.timer == null) return null;
+
+        return self.scheduledTime;
     }
 }

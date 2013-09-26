@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,10 +17,19 @@ import az.his.android.hisapi.ApiProvider;
 import az.his.android.persist.CategoryColumns;
 import az.his.android.persist.DbHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class EnterTransactionActivity extends Activity implements ApiListener {
 
     private DbHelper dbHelper;
     private SharedPreferences sharedPref;
+    private SimpleDateFormat statusDateFormat = new SimpleDateFormat("HH:mm E dd MMM");
+
+    private Handler guiHandler = new Handler();
+    private String status;
 
     /**
      * Called when the activity is first created.
@@ -60,13 +70,40 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
             Spinner spinner = (Spinner) findViewById(R.id.spnCategory);
             spinner.setAdapter(adapter);
 
-            updateTrNumber();
+            updateStatus();
+
+            // Update status again in a couple of seconds when service is (probably) started.
+            (new Timer()).schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    updateStatus();
+                }
+            }, 2000);
         }
     }
 
-    private void updateTrNumber() {
+    private void updateStatus() {
         long trNum = dbHelper.getTransactionNum();
-        ((TextView) findViewById(R.id.txtAddTrStatus)).setText(getString(R.string.main_msg_transnum, trNum));
+        StringBuilder statusStr = new StringBuilder();
+
+        Date time = SyncService.getScheduledTime();
+
+        if (time == null) {
+            statusStr.append("Not scheduled");
+        } else {
+            statusStr.append("Scheduled to ").append(statusDateFormat.format(time));
+        }
+
+        statusStr.append("\n");
+        statusStr.append(getString(R.string.main_msg_transnum, trNum));
+
+        status = statusStr.toString();
+        guiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                ((TextView) findViewById(R.id.txtAddTrStatus)).setText(status);
+            }
+        });
     }
 
     public void onBtSubmit(@SuppressWarnings("UnusedParameters") View view) {
@@ -77,7 +114,7 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
 
         Toast.makeText(this, getString(R.string.main_msg_transadded), 1000).show();
         ((EditText) findViewById(R.id.etAmount)).setText("0");
-        updateTrNumber();
+        updateStatus();
     }
 
     @Override
@@ -107,7 +144,7 @@ public class EnterTransactionActivity extends Activity implements ApiListener {
         if (result == Boolean.TRUE) {
             Toast.makeText(this, getString(R.string.main_msg_transsubmitted), 1000).show();
             dbHelper.cleanTransactions();
-            updateTrNumber();
+            updateStatus();
         }
     }
 }
